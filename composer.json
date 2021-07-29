@@ -10,7 +10,7 @@
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-        "guzzlehttp/guzzle": "^6.2",
+        "guzzlehttp/guzzle": ">=6.2",
         "php": ">=5.6",
         "ext-json": "*"
     },
