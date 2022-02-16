@@ -6,8 +6,6 @@
 
 ### Клиент для управения офлайн-данными Яндекс.Метрики используя API
 
-Документацию по доступным методам вскоре появится по [ссылке](https://meiji.media)
-
 _*Внимание!*_ API находится в стадии разработки.
 
 ## Installation
@@ -17,7 +15,7 @@ _*Внимание!*_ API находится в стадии разработк�
 ```bash
 "repositories": [
     {
-        "url": "https://github.com/rshkabko/yandex-metrika-offline-conversion-php.git",
+        "url": "https://github.com/sergeich5/yandex-metrika-offline-conversion-php.git",
         "type": "git"
     }
 ]
@@ -26,7 +24,7 @@ _*Внимание!*_ API находится в стадии разработк�
 Сохраните и выполните команду
 
 ```bash
-composer require rshkabko/yandex-metrika-offline-conversion-php
+composer require sergeich5/yandex-metrika-offline-conversion-php
 ```
 
 ## Usage
