@@ -36,7 +36,7 @@ use Meiji\YandexMetrikaOffline\Conversion;
 
 $oauthToken = 'dsERGE4564GBFDG34t3GDEREBbrgbdfbg4564DG3'; // OAuth-токен
 $counterId = 123456; // идентификатор счетчика
-$client_id_type = 'CLIENT_ID'; // или USER_ID
+$client_id_type = 'CLIENT_ID'; // или USER_ID / YCLID
 
 $metrikaOffline = new \Meiji\YandexMetrikaOffline\Conversion($oauthToken);
 $metrikaConversionUpload = $metrikaOffline->upload($counterId, $client_id_type);

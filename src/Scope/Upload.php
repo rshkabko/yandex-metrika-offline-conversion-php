@@ -24,6 +24,10 @@ class Upload
 	/**
 	 *
 	 */
+	const CLIENT_ID_TYPE_YCLID = 'YCLID';
+	/**
+	 *
+	 */
 	const SCOPE_PATH = 'upload';
 	
 	/**
@@ -77,7 +81,7 @@ class Upload
 	public function clientIdType($type)
 	{
 		
-		if ($type == self::CLIENT_ID_TYPE_USER || $type == self::CLIENT_ID_TYPE_CLIENT) {
+		if ($type == self::CLIENT_ID_TYPE_USER || $type == self::CLIENT_ID_TYPE_CLIENT || $type == self::CLIENT_ID_TYPE_YCLID) {
 			$this->client_id_type = $type;
 		}
 		
