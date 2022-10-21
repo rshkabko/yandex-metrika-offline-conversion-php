@@ -21,7 +21,7 @@ class ConversionHeader
 	/**
 	 *
 	 */
-	const CLIENT_ID_TYPE_CIENT_COLUMN_NAME = 'ClientId';
+	const CLIENT_ID_TYPE_CLIENT_COLUMN_NAME = 'ClientId';
 	/**
 	 *
 	 */
@@ -66,7 +66,7 @@ class ConversionHeader
 
 			default:
 			case Upload::CLIENT_ID_TYPE_CLIENT:
-				$typeColumnName = self::CLIENT_ID_TYPE_CIENT_COLUMN_NAME;
+				$typeColumnName = self::CLIENT_ID_TYPE_CLIENT_COLUMN_NAME;
 				break;
 
 			case Upload::CLIENT_ID_TYPE_YCLID:
