@@ -21,12 +21,16 @@ class ConversionHeader
 	/**
 	 *
 	 */
-	const CLIENT_ID_TYPE_CIENT_COLUMN_NAME = 'ClientId';
-	
+	const CLIENT_ID_TYPE_CLIENT_COLUMN_NAME = 'ClientId';
+	/**
+	 *
+	 */
+	const CLIENT_ID_TYPE_YCLID_COLUMN_NAME = 'Yclid';
+
 	/**
 	 * @var array
 	 */
-	private static $availableColumns = ['UserId', 'ClientId', 'Target', 'DateTime', 'Price', 'Currency'];
+	private static $availableColumns = ['UserId', 'ClientId', 'Yclid', 'Target', 'DateTime', 'Price', 'Currency'];
 	
 	/**
 	 * @var null
@@ -55,9 +59,20 @@ class ConversionHeader
 	 */
 	public function getString()
 	{
-		
-		$typeColumnName = $this->ClientIdType == Upload::CLIENT_ID_TYPE_USER ? self::CLIENT_ID_TYPE_USER_COLUMN_NAME :
-			self::CLIENT_ID_TYPE_CIENT_COLUMN_NAME;
+		switch ($this->ClientIdType) {
+			case Upload::CLIENT_ID_TYPE_USER:
+				$typeColumnName = self::CLIENT_ID_TYPE_USER_COLUMN_NAME;
+				break;
+
+			default:
+			case Upload::CLIENT_ID_TYPE_CLIENT:
+				$typeColumnName = self::CLIENT_ID_TYPE_CLIENT_COLUMN_NAME;
+				break;
+
+			case Upload::CLIENT_ID_TYPE_YCLID:
+				$typeColumnName = self::CLIENT_ID_TYPE_YCLID_COLUMN_NAME;
+				break;
+		}
 		
 		$headerString = $typeColumnName;
 		foreach ($this->usesColumns as $columnName) {
