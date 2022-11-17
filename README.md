@@ -44,7 +44,20 @@ $metrikaConversionUpload->comment('Комментарий к загрузке');
 
 $metrikaConversionUpload->addConversion('133591247640966458', 'GOAL1', '1481718166'); // Добавяем конверсию
 $metrikaConversionUpload->addConversion('579124169844706072', 'GOAL3', '1481718116', '678.90', 'RUB'); // Добавяем ещё конверсию
+$metrikaConversionUpload->addConversionCall('133591247640966458', time()); // Передача данных о звонке
+$metrikaConversionUpload->addConversionCall('123456789234565432', time(), [
+                    'StaticCall' => 0,
+                    'Price' => '778.90',
+                    'Currency' => 'RUB',
+                    'PhoneNumber' => '+79127778899',
+                    'TalkDuration' => 69,
+                    'HoldDuration' => 5,
+                    'CallMissed' => 0,
+                    'Tag' => 'Неадекватный клиент',
+                    'FirstTimeCaller' => 1,
+                    'URL' => 'https://mySite.ru/page',
+                    'CallTrackerURL' => 'https://myCallTrackerURL.com'
+]); // Еще одна передача данных о звонке
 /* ... и далее добавляем необходимое количество конверсий ... */
-
 $uploadResult = $metrikaConversionUpload->send(); // Отправляем данные. $uploadResult содержит информацию о передаче, в соотвествии с объектом "uploading"
 ```

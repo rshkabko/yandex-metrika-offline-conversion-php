@@ -4,7 +4,6 @@ namespace Meiji\YandexMetrikaOffline\Scope;
 
 use Meiji\YandexMetrikaOffline\Conversion;
 
-
 /**
  * Class Upload
  *
@@ -12,7 +11,7 @@ use Meiji\YandexMetrikaOffline\Conversion;
  */
 class Upload
 {
-	
+
 	/**
 	 *
 	 */
@@ -25,11 +24,6 @@ class Upload
 	 *
 	 */
 	const CLIENT_ID_TYPE_YCLID = 'YCLID';
-	/**
-	 *
-	 */
-	const SCOPE_PATH = 'upload';
-	
 	/**
 	 * @var \Meiji\YandexMetrikaOffline\Conversion
 	 */
@@ -50,11 +44,15 @@ class Upload
 	 * @var \Meiji\YandexMetrikaOffline\ValueObject\ConversionsIterator
 	 */
 	private $conversions;
+    /**
+     * @var \Meiji\YandexMetrikaOffline\ValueObject\ConversionsIterator
+     */
+    private $conversionCalls;
 	/**
 	 * @var string
 	 */
 	private $comment;
-	
+
 	/**
 	 * Upload constructor.
 	 *
@@ -65,14 +63,14 @@ class Upload
 	public function __construct(\Meiji\YandexMetrikaOffline\Conversion $conversionInstance, $counterId,
 		$client_id_type = self::CLIENT_ID_TYPE_CLIENT)
 	{
-		
+
 		$this->conversionInstance = $conversionInstance;
 		$this->counterId($counterId);
 		$this->clientIdType($client_id_type);
 		$this->header      = new \Meiji\YandexMetrikaOffline\ValueObject\ConversionHeader($this->client_id_type);
 		$this->conversions = new \Meiji\YandexMetrikaOffline\ValueObject\ConversionsIterator();
 	}
-	
+
 	/**
 	 * @param string $type
 	 *
@@ -80,14 +78,14 @@ class Upload
 	 */
 	public function clientIdType($type)
 	{
-		
+
 		if ($type == self::CLIENT_ID_TYPE_USER || $type == self::CLIENT_ID_TYPE_CLIENT || $type == self::CLIENT_ID_TYPE_YCLID) {
 			$this->client_id_type = $type;
 		}
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * @param int $id
 	 *
@@ -95,12 +93,12 @@ class Upload
 	 */
 	public function counterId($id)
 	{
-		
+
 		$this->counterId = $id;
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * @param string $text
 	 *
@@ -108,12 +106,12 @@ class Upload
 	 */
 	public function comment($text)
 	{
-		
+
 		$this->comment = $text;
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * @param string      $cid
 	 * @param string      $target
@@ -125,53 +123,85 @@ class Upload
 	 */
 	public function addConversion($cid, $target, $dateTime = null, $price = null, $currency = null)
 	{
-		
+
 		if ($price) {
 			$this->header->addUsesColumn('Price');
 		}
-		
+
 		if ($currency) {
 			$this->header->addUsesColumn('Currency');
 		}
-		
+
 		$conversion = new \Meiji\YandexMetrikaOffline\ValueObject\Conversion($cid, $target, $dateTime, $price,
 			$currency);
-		
+
 		$this->conversions->append($conversion);
-		
+
 		return $conversion;
 	}
-	
-	/**
-	 * @return bool|mixed
-	 */
-	public function send()
+
+
+    /**
+     * @param string      $cid
+     * @param null|string $dateTime
+     * @param null|array $optional_parameters
+     *
+     * @return \Meiji\YandexMetrikaOffline\ValueObject\ConversionCall
+     */
+    public function addConversionCall($cid, $dateTime = null, $optional_parameters = null)
+    {
+
+        $conversionCall = new \Meiji\YandexMetrikaOffline\ValueObject\ConversionCall($cid, $dateTime, $optional_parameters);
+
+        $this->conversionCalls->append($conversionCall);
+
+        return $conversionCall;
+    }
+
+    public function send()
+    {
+
+        if(!empty($this->conversions)) {
+            $result['upload'] = $this->mainSend($this->conversions, 'upload');
+        }
+        if(!empty($this->conversionCalls)) {
+            $result['upload_calls'] = $this->mainSend($this->conversionCalls, 'upload_calls');
+        }
+
+        return $result ?? false;
+
+    }
+
+    /**
+     * @param $conversions
+     * @param $scope_path
+     * @return bool|mixed
+     */
+	private function mainSend($conversions, $scope_path)
 	{
-		
+
 		$requestUrl = Conversion::API_URL .
 					  '/counter/' .
 					  $this->counterId .
 					  '/offline_conversions/' .
-					  self::SCOPE_PATH .
+                      $scope_path .
 					  '?client_id_type=' .
 					  $this->client_id_type;
-		
+
 		if ($this->comment) {
 			$requestUrl .= '&comment=' . $this->comment;
 		}
-		
-		$result = false;
-		
+
 		$response = $this->conversionInstance->getHTTPClient()
 			->setUrl($requestUrl)
-			->addFile(new \Meiji\YandexMetrikaOffline\ValueObject\ConversionFile($this->header, $this->conversions))
+			->addFile(new \Meiji\YandexMetrikaOffline\ValueObject\ConversionFile($this->header, $conversions))
 			->requestPost();
-		
+
 		if ($response->getStatusCode() === 200) {
 			$result = json_decode((string)$response->getBody());
 		}
-		
-		return $result;
+
+		return $result ?? false;
 	}
-	
+
 }
