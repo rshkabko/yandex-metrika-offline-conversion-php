@@ -11,18 +11,18 @@ namespace Meiji\YandexMetrikaOffline\ValueObject;
 class ConversionCall
 {
 
-	/**
-	 * @var string
-	 */
-	public $ClientId;
-	/**
-	 * @var string
-	 */
-	public $DateTime;
-	/**
-	 * @var string|null
-	 */
-	public $StaticCall = 0;
+    /**
+     * @var string
+     */
+    public $ClientId;
+    /**
+     * @var string
+     */
+    public $DateTime;
+    /**
+     * @var string|null
+     */
+    public $StaticCall = 0;
     /**
      * @var string|null
      */
@@ -64,15 +64,15 @@ class ConversionCall
      */
     public $CallTrackerURL;
 
-	/**
-	 * Conversion constructor.
-	 *
-	 * @param string      $ClientId
-	 * @param string|null $DateTime
-	 * @param array $optional_parameters
-	 */
-	public function __construct($ClientId, $DateTime = null, $optional_parameters = null)
-	{
+    /**
+     * Conversion constructor.
+     *
+     * @param string      $ClientId
+     * @param string|null $DateTime
+     * @param array $optional_parameters
+     */
+    public function __construct($ClientId, $DateTime = null, $optional_parameters = null)
+    {
 
         $optionals = [
             'StaticCall',
@@ -99,23 +99,7 @@ class ConversionCall
             }
         }
 
+    }
 
-	}
-
-	/**
-	 * @param array $columns
-	 *
-	 * @return string
-	 */
-	public function getString(array $columns = [])
-	{
-
-		$conversionString = $this->ClientId;
-		foreach ($columns as $columnName) {
-			$conversionString .= "," . $this->{$columnName};
-		}
-
-		return $conversionString;
-	}
 
 }

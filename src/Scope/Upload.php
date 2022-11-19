@@ -12,133 +12,120 @@ use Meiji\YandexMetrikaOffline\Conversion;
 class Upload
 {
 
-	/**
-	 *
-	 */
-	const CLIENT_ID_TYPE_USER = 'USER_ID';
-	/**
-	 *
-	 */
-	const CLIENT_ID_TYPE_CLIENT = 'CLIENT_ID';
-	/**
-	 *
-	 */
-	const CLIENT_ID_TYPE_YCLID = 'YCLID';
-	/**
-	 * @var \Meiji\YandexMetrikaOffline\Conversion
-	 */
-	private $conversionInstance;
-	/**
-	 * @var string
-	 */
-	private $client_id_type;
-	/**
-	 * @var int
-	 */
-	private $counterId;
-	/**
-	 * @var \Meiji\YandexMetrikaOffline\ValueObject\ConversionHeader
-	 */
-	private $header;
-	/**
-	 * @var \Meiji\YandexMetrikaOffline\ValueObject\ConversionsIterator
-	 */
-	private $conversions;
+    /**
+     *
+     */
+    const CLIENT_ID_TYPE_USER = 'USER_ID';
+    /**
+     *
+     */
+    const CLIENT_ID_TYPE_CLIENT = 'CLIENT_ID';
+    /**
+     *
+     */
+    const CLIENT_ID_TYPE_YCLID = 'YCLID';
+    /**
+     * @var \Meiji\YandexMetrikaOffline\Conversion
+     */
+    private $conversionInstance;
+    /**
+     * @var string
+     */
+    private $client_id_type;
+    /**
+     * @var int
+     */
+    private $counterId;
+    /**
+     * @var \Meiji\YandexMetrikaOffline\ValueObject\ConversionsIterator
+     */
+    private $conversionTargets;
     /**
      * @var \Meiji\YandexMetrikaOffline\ValueObject\ConversionsIterator
      */
     private $conversionCalls;
-	/**
-	 * @var string
-	 */
-	private $comment;
+    /**
+     * @var string
+     */
+    private $comment;
 
-	/**
-	 * Upload constructor.
-	 *
-	 * @param \Meiji\YandexMetrikaOffline\Conversion $conversionInstance
-	 * @param int                                    $counterId
-	 * @param string                                 $client_id_type
-	 */
-	public function __construct(\Meiji\YandexMetrikaOffline\Conversion $conversionInstance, $counterId,
-		$client_id_type = self::CLIENT_ID_TYPE_CLIENT)
-	{
+    /**
+     * Upload constructor.
+     *
+     * @param \Meiji\YandexMetrikaOffline\Conversion $conversionInstance
+     * @param int                                    $counterId
+     * @param string                                 $client_id_type
+     */
+    public function __construct(\Meiji\YandexMetrikaOffline\Conversion $conversionInstance, $counterId,
+                                $client_id_type = self::CLIENT_ID_TYPE_CLIENT)
+    {
 
-		$this->conversionInstance = $conversionInstance;
-		$this->counterId($counterId);
-		$this->clientIdType($client_id_type);
-		$this->header      = new \Meiji\YandexMetrikaOffline\ValueObject\ConversionHeader($this->client_id_type);
-		$this->conversions = new \Meiji\YandexMetrikaOffline\ValueObject\ConversionsIterator();
-	}
+        $this->conversionInstance = $conversionInstance;
+        $this->counterId($counterId);
+        $this->clientIdType($client_id_type);
+        $this->conversionTargets = new \Meiji\YandexMetrikaOffline\ValueObject\ConversionsIterator($this->client_id_type);
+        $this->conversionCalls = new \Meiji\YandexMetrikaOffline\ValueObject\ConversionsIterator($this->client_id_type);
+    }
 
-	/**
-	 * @param string $type
-	 *
-	 * @return $this
-	 */
-	public function clientIdType($type)
-	{
+    /**
+     * @param string $type
+     *
+     * @return $this
+     */
+    public function clientIdType($type)
+    {
 
-		if ($type == self::CLIENT_ID_TYPE_USER || $type == self::CLIENT_ID_TYPE_CLIENT || $type == self::CLIENT_ID_TYPE_YCLID) {
-			$this->client_id_type = $type;
-		}
+        if ($type == self::CLIENT_ID_TYPE_USER || $type == self::CLIENT_ID_TYPE_CLIENT || $type == self::CLIENT_ID_TYPE_YCLID) {
+            $this->client_id_type = $type;
+        }
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * @param int $id
-	 *
-	 * @return $this
-	 */
-	public function counterId($id)
-	{
+    /**
+     * @param int $id
+     *
+     * @return $this
+     */
+    public function counterId($id)
+    {
 
-		$this->counterId = $id;
+        $this->counterId = $id;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * @param string $text
-	 *
-	 * @return $this
-	 */
-	public function comment($text)
-	{
+    /**
+     * @param string $text
+     *
+     * @return $this
+     */
+    public function comment($text)
+    {
 
-		$this->comment = $text;
+        $this->comment = $text;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * @param string      $cid
-	 * @param string      $target
-	 * @param null|string $dateTime
-	 * @param null|string $price
-	 * @param null|string $currency
-	 *
-	 * @return \Meiji\YandexMetrikaOffline\ValueObject\Conversion
-	 */
-	public function addConversion($cid, $target, $dateTime = null, $price = null, $currency = null)
-	{
+    /**
+     * @param string      $cid
+     * @param string      $target
+     * @param null|string $dateTime
+     * @param null|string $price
+     * @param null|string $currency
+     *
+     * @return \Meiji\YandexMetrikaOffline\ValueObject\Conversion
+     */
+    public function addConversion($cid, $target, $dateTime = null, $price = null, $currency = null)
+    {
 
-		if ($price) {
-			$this->header->addUsesColumn('Price');
-		}
+        $conversion_target = new \Meiji\YandexMetrikaOffline\ValueObject\Conversion($cid, $target, $dateTime, $price, $currency);
 
-		if ($currency) {
-			$this->header->addUsesColumn('Currency');
-		}
+        $this->conversionTargets->add($conversion_target);
 
-		$conversion = new \Meiji\YandexMetrikaOffline\ValueObject\Conversion($cid, $target, $dateTime, $price,
-			$currency);
-
-		$this->conversions->append($conversion);
-
-		return $conversion;
-	}
+        return $conversion_target;
+    }
 
 
     /**
@@ -153,7 +140,7 @@ class Upload
 
         $conversionCall = new \Meiji\YandexMetrikaOffline\ValueObject\ConversionCall($cid, $dateTime, $optional_parameters);
 
-        $this->conversionCalls->append($conversionCall);
+        $this->conversionCalls->add($conversionCall);
 
         return $conversionCall;
     }
@@ -161,11 +148,11 @@ class Upload
     public function send()
     {
 
-        if(!empty($this->conversions)) {
-            $result['upload'] = $this->mainSend($this->conversions, 'upload');
+        if(!empty($this->conversionTargets->conversions)) {
+            $result['upload'] = $this->requestSend($this->conversionTargets, 'upload');
         }
-        if(!empty($this->conversionCalls)) {
-            $result['upload_calls'] = $this->mainSend($this->conversionCalls, 'upload_calls');
+        if(!empty($this->conversionCalls->conversions)) {
+            $result['upload_calls'] = $this->requestSend($this->conversionCalls, 'upload_calls');
         }
 
         return $result ?? false;
@@ -173,35 +160,35 @@ class Upload
     }
 
     /**
-     * @param $conversions
+     * @var \Meiji\YandexMetrikaOffline\ValueObject\ConversionsIterator $conversions
      * @param $scope_path
      * @return bool|mixed
      */
-	private function mainSend($conversions, $scope_path)
-	{
+    private function requestSend($conversions, $scope_path)
+    {
 
-		$requestUrl = Conversion::API_URL .
-					  '/counter/' .
-					  $this->counterId .
-					  '/offline_conversions/' .
-                      $scope_path .
-					  '?client_id_type=' .
-					  $this->client_id_type;
+        $requestUrl = Conversion::API_URL .
+            '/counter/' .
+            $this->counterId .
+            '/offline_conversions/' .
+            $scope_path .
+            '?client_id_type=' .
+            $this->client_id_type;
+        if ($this->comment) {
+            $requestUrl .= '&comment=' . $this->comment;
+        }
 
-		if ($this->comment) {
-			$requestUrl .= '&comment=' . $this->comment;
-		}
 
-		$response = $this->conversionInstance->getHTTPClient()
-			->setUrl($requestUrl)
-			->addFile(new \Meiji\YandexMetrikaOffline\ValueObject\ConversionFile($this->header, $conversions))
-			->requestPost();
+        $response = $this->conversionInstance->getHTTPClient()
+            ->setUrl($requestUrl)
+            ->addFile(new \Meiji\YandexMetrikaOffline\ValueObject\ConversionFile($conversions))
+            ->requestPost();
 
-		if ($response->getStatusCode() === 200) {
-			$result = json_decode((string)$response->getBody());
-		}
+        if ($response->getStatusCode() === 200) {
+            $result = json_decode((string)$response->getBody());
+        }
 
-		return $result ?? false;
-	}
+        return $result ?? false;
+    }
 
 }
