@@ -12,7 +12,7 @@ use Meiji\YandexMetrikaOffline\Conversion;
  */
 class Client
 {
-	
+
 	/**
 	 * @var string
 	 */
@@ -29,7 +29,7 @@ class Client
 	 * @var string
 	 */
 	private $url;
-	
+
 	/**
 	 * Client constructor.
 	 *
@@ -37,10 +37,10 @@ class Client
 	 */
 	public function __construct($token)
 	{
-		
+
 		$this->token = $token;
 	}
-	
+
 	/**
 	 * @param string $url
 	 *
@@ -48,12 +48,12 @@ class Client
 	 */
 	public function setUrl($url)
 	{
-		
+
 		$this->url = $url;
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * @param \Meiji\YandexMetrikaOffline\ValueObject\ConversionFile $file
 	 *
@@ -61,19 +61,19 @@ class Client
 	 */
 	public function addFile(\Meiji\YandexMetrikaOffline\ValueObject\ConversionFile $file)
 	{
-		
+
 		$this->contentType = 'multipart/form-data';
 		$this->multipart[] = $file->getArray();
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * @return \Psr\Http\Message\ResponseInterface
 	 */
 	public function requestPost()
 	{
-		
+
 		$guzzle = new \GuzzleHttp\Client([
 			'headers' => [
 				'Authorization' => 'OAuth ' . $this->token,
@@ -81,16 +81,16 @@ class Client
 				'Content-Type'  => $this->contentType
 			]
 		]);
-		
+
 		$optionsArray = [];
-		
+
 		if (!empty($this->multipart)) {
 			$optionsArray['multipart'] = $this->multipart;
 		}
-		
+
 		$response = $guzzle->post($this->url, $optionsArray);
-		
+
 		return $response;
 	}
-	
+
 }
